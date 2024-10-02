@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv, dotenv_values
+import os
+
+
+load_dotenv()
 
 class Item(BaseModel):
     text: str
@@ -8,7 +13,7 @@ class Item(BaseModel):
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    os.getenv("MY_APP_URL"),
 ]
 
 app.add_middleware(
