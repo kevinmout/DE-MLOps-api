@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 import os
 
 
@@ -27,5 +27,5 @@ app.add_middleware(
 
 @app.post("/api/v1/post/text")
 def run_model(item: Item):
-    model = item.text + " - processed by the model. It's working!"
-    return model[::-1]
+    model = item.text[::-1] + " - processed by the model. It's working!"
+    return model
