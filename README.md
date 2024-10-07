@@ -25,7 +25,7 @@ pip install fastapi[standard]
 ### Run
 
 ```
-fastapi run app/main.py --port 4000
+fastapi run app/main.py --port 4000 --reload
 ```
 
 Set environment variables:

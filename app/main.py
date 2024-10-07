@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
-
+from google_cloud_client import GoogleCloudClient
 
 load_dotenv()
 
@@ -28,4 +28,5 @@ app.add_middleware(
 @app.post("/api/v1/post/text")
 def run_model(item: Item):
     model = item.text[::-1] + " - processed by the model. It's working!"
-    return model
+    client = GoogleCloudClient()
+    return client.get_latest_blob("model-store-1")
