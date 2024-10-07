@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+from classification import Prediction
 from google_cloud_client import GoogleCloudClient
 
 load_dotenv()
@@ -27,6 +28,8 @@ app.add_middleware(
 
 @app.post("/api/v1/post/text")
 def run_model(item: Item):
-    model = item.text[::-1] + " - processed by the model. It's working!"
-    client = GoogleCloudClient()
-    return client.get_latest_blob("model-store-1")
+    outcome_model = Prediction.classification(item.text)
+    if outcome_model == 0:
+        return {"prediction": "written by a human"}
+    else:
+        return {"prediction": "AI generated"}
