@@ -2,20 +2,7 @@
 
 ## Commands
 
-### Install FastAPI and uvicorn:
-
-```
-pip install uvicorn
-pip install fastapi
-```
-
-### Run
-
-```
-uvicorn main:app --port 4000
-```
-
-### Or only install FastAPI:
+### Install FastAPI:
 
 ```
 
