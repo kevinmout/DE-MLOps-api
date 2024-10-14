@@ -2,8 +2,6 @@ from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
 import tensorflow as tf
 
-import pandas as pd
-
 
 class Prediction:
 
