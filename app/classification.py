@@ -1,5 +1,6 @@
 import torch
 from transformers import AutoTokenizer, BertForSequenceClassification
+import os
 
 
 class Prediction:
@@ -8,6 +9,9 @@ class Prediction:
     def classification(input_text):
         #Load saved model and tokenizer
         model_path = "./saved_model"  #Adjust this path if needed
+
+        if not os.path.exists(model_path):
+            raise FileNotFoundError()
 
         #Load the pre-trained BERT model
         best_model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=3)
