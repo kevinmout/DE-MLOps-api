@@ -1,54 +1,43 @@
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
-
-import tensorflow as tf
+import torch
+from transformers import AutoTokenizer, BertForSequenceClassification
 
 
 class Prediction:
-
-
-    @staticmethod
-    def initialize():
-        #Load "roberta-base-openai-detector" (source: https://huggingface.co/openai-community/roberta-base-openai-detector)
-        model_name = "roberta-base-openai-detector"
-
-        #Load the tokenizer and model from Hugging Face Model Hub
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = TFAutoModelForSequenceClassification.from_pretrained(model_name)
-        #Save the model and tokenizer
-        model.save_pretrained('./saved_model')
-        tokenizer.save_pretrained('./saved_tokenizer')
     
     @staticmethod
     def classification(input_text):
+        #Load saved model and tokenizer
+        model_path = "./saved_model"  #Adjust this path if needed
 
-        # if the model and tokenizer are not saved, initialize them
-        try:
-            model = TFAutoModelForSequenceClassification.from_pretrained('./saved_model')
-            tokenizer = AutoTokenizer.from_pretrained('./saved_tokenizer')
-        except:
-            Prediction.initialize()
-            model = TFAutoModelForSequenceClassification.from_pretrained('./saved_model')
-            tokenizer = AutoTokenizer.from_pretrained('./saved_tokenizer')
+        #Load the pre-trained BERT model
+        best_model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=3)
+        best_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
-        #Load saved model + tokenizer
-        model = TFAutoModelForSequenceClassification.from_pretrained('./saved_model')
-        tokenizer = AutoTokenizer.from_pretrained('./saved_tokenizer')
+        #Load the tokenizer
+        tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
         #Tokenize the input text
         inputs = tokenizer(
             input_text,
-            return_tensors="tf",
             padding=True,
             truncation=True,
-            max_length=512
+            return_tensors="pt"  #Return PyTorch tensors
         )
 
-        #Run the input through the model
-        outputs = model(inputs['input_ids'], attention_mask=inputs['attention_mask'])
+        #Set the model to evaluation mode (important for inference)
+        best_model.eval()
+
+        #Run the input through the model (no gradients needed)
+        with torch.no_grad():
+            outputs = best_model(input_ids=inputs['input_ids'], attention_mask=inputs['attention_mask'])
 
         #Get the predicted label (highest softmax probability)
         logits = outputs.logits
-        predicted_class = tf.argmax(logits, axis=1).numpy()[0]  # Get class with highest score
+        predicted_class = torch.argmax(logits, dim=1).detach().cpu().numpy()[0]  # Detach and convert to NumPy
 
-        #Return the predicted class
-        return predicted_class
+        #Map the predicted class to sentiment labels
+        label_map = {0: 'negative', 1: 'neutral', 2: 'positive'}  # Adjust the mapping as per your label encoding
+        predicted_label = label_map[predicted_class]
+
+        #Return the predicted class label
+        return predicted_label

@@ -29,7 +29,4 @@ app.add_middleware(
 @app.post("/api/v1/post/text")
 def run_model(item: Item):
     outcome_model = Prediction.classification(item.text)
-    if outcome_model == 0:
-        return {"prediction": "written by a human"}
-    else:
-        return {"prediction": "AI generated"}
+    return outcome_model
