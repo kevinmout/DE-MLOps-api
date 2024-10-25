@@ -2,14 +2,17 @@
 
 ## Commands
 
-Install FastAPI and uvicorn:
+### Install FastAPI:
 
 ```
-pip install uvicorn
+
+pip install fastapi[standard]
 ```
 
+### Run
+
 ```
-pip install fastapi
+fastapi run app/main.py --port 4000
 ```
 
 Set environment variables:
@@ -19,8 +22,12 @@ Set environment variables:
 3. Check the url of your website.
 4. Replace this in .env.
 
-To run API:
+To run in docker:
 
 ```
-uvicorn main:app --port 4000
+docker build -t python-api .
+```
+
+```
+docker run -d --name my-api -p 80:80 -e  MY_APP_URL=http://localhost:3000 python-api
 ```
