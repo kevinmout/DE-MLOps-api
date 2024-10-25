@@ -7,6 +7,7 @@ from helper import Helper
 from classification import Prediction
 from google_cloud_client import GoogleCloudClient
 from feedback_manager import FeedbackManager
+from google.cloud import storage
 
 
 
@@ -84,7 +85,26 @@ def download_feedback():
     return df.to_dict(orient="records")
     
 
-@app.post("/api/v1/post/text")
+@app.post("/api/v1/classify/text")
 def run_model(item: Item):
     outcome_model = Prediction.classification(item.text)
     return outcome_model
+
+
+@app.get("/api/v1/refresh/model")
+def refresh_model():
+        # initialize a Google Cloud Storage client
+    google_client = storage.Client()
+
+    # paths and names for the feedback file
+    bucket_name = os.getenv("BUCKET_NAME")
+    model_path = "model"
+
+    bucket = google_client.bucket(bucket_name)
+
+    # download the model file from GCS
+    blob = bucket.blob(model_path)
+    blob.download_to_filename("model")
+
+
+    return "Model refreshed!"
