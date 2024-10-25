@@ -15,7 +15,7 @@ load_dotenv()
 class Item(BaseModel):
     text: str
 
-class Feedback(BaseModel):
+class Feedback_input(BaseModel):
     input_text: str
     predicted_class: str
     correct_class: str
@@ -35,7 +35,7 @@ app.add_middleware(
 )
 
 @app.post("/api/v1/post/feedback")
-def upload_feedback(feedback: Feedback):
+def upload_feedback(feedback: Feedback_input):
     # initialize a Google Cloud Storage client and a FeedbackManager
     google_client = GoogleCloudClient()
     feedback_manager = FeedbackManager(feedback)

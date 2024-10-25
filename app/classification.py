@@ -8,7 +8,7 @@ class Prediction:
     @staticmethod
     def classification(input_text):
         #Load saved model and tokenizer
-        model_path = "./saved_model"  #Adjust this path if needed
+        model_path = "./model"  #Adjust this path if needed
 
         if not os.path.exists(model_path):
             raise FileNotFoundError()
