@@ -6,16 +6,24 @@ from helper import Helper
 
 class Feedback(BaseModel):
     input_text: str
-    predicted_class: str
-    correct_class: str
+    predicted_class: int
+    correct_class: int
 
 class FeedbackManager:
-    def __init__(self, feedback: Feedback):
-        self.feedback = feedback
+    CLASS_MAP = {'positive': 2, 'neutral': 1, 'negative': 0}
+
+    def __init__(self, feedback_input):
+        # Convert `predicted_class` and `correct_class` to integer values
+        self.feedback = Feedback(
+            input_text=feedback_input.input_text,
+            predicted_class=self.CLASS_MAP.get(feedback_input.predicted_class, -1),
+            correct_class=self.CLASS_MAP.get(feedback_input.correct_class, -1)
+        )
+
 
     def create_feedback_df(self, file_path):
         # Create a DataFrame from the feedback
-        df = pd.DataFrame([self.feedback.model_dump()])
+        df = pd.DataFrame([self.feedback.dict()])
         
         # Save DataFrame to a CSV file
         df.to_csv(file_path, index=False)
