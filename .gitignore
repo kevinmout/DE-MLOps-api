@@ -1,4 +1,5 @@
-_py_cache
-__pycache__
-
+*__pycache__
 .env
+serviceKey_google_cloud.json
+saved_model
+saved_tokenizer
