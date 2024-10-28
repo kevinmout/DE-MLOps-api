@@ -1,0 +1,43 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - >-
+        ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/prediction-api:0.0.1
+      - ./
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/prediction-api:0.0.1
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - run
+      - deploy
+      - prediction-api
+      - '--image'
+      - >-
+        ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/prediction-api:0.0.1
+      - '--region'
+      - us-central1
+      - '--platform'
+      - managed
+      - '--port'
+      - '80'
+      - '--cpu'
+      - '2'
+      - '--memory'
+      - 4G
+      - '--set-env-vars'
+      - MY_APP_URL=your_app_url
+      - '--set-env-vars'
+      - LOCAL_FEEDBACK_FILE_PATH=feedback.csv
+      - '--set-env-vars'
+      - GOOGLE_FEEDBACK_FILE_PATH=feedback/feedback.csv
+      - '--set-env-vars'
+      - BUCKET_NAME=model-store-2
+      - '--allow-unauthenticated'
+    entrypoint: gcloud
+options:
+  logging: CLOUD_LOGGING_ONLY
