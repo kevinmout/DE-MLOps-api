@@ -97,7 +97,7 @@ def refresh_model():
     google_client = storage.Client()
 
     # paths and names for the feedback file
-    bucket_name = os.getenv("BUCKET_NAME")
+    bucket_name = os.getenv("BUCKET_NAME_MODEL")
     model_path = "model"
 
     bucket = google_client.bucket(bucket_name)
